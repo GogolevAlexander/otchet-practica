@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Создание теста</title>
+</head>
+<body>
+    <h1>Создание теста</h1>
+    
+    <h2>Шаг 1: Название теста</h2>
+    <input type="text" id="testName" placeholder="Введите название теста"><br><br>
+    
+    <h2>Шаг 2: Вопросы и варианты ответов</h2>
+    <button onclick="addQuestion()">Добавить вопрос</button><br><br>
+    
+    <div id="questionsContainer"></div>
+    
+    <button onclick="saveTest()">Сохранить</button>
+    
+    <script>
+        var questionCounter = 1;
+        
+        function addQuestion() {
+            var questionDiv = document.createElement("div");
+            questionDiv.id = "questionDiv" + questionCounter;
+            questionDiv.innerHTML = "<h3>Вопрос " + questionCounter + "</h3>" +
+                                    "<input type='text' id='question" + questionCounter + "' placeholder='Введите вопрос'>" +
+                                    "<br><br>" +
+                                    "<h4>Варианты ответов:</h4>" +
+                                    "<button onclick='addAnswer(" + questionCounter + ")'>Добавить вариант ответа</button>" +
+                                    "<button onclick='deleteQuestion(" + questionCounter + ")'>Удалить вопрос</button>" +
+                                    "<br><br>" +
+                                    "<div id='answersContainer" + questionCounter + "'></div>" +
+                                    "<br><br>";
+            
+            document.getElementById("questionsContainer").appendChild(questionDiv);
+            
+            questionCounter++;
+        }
+        
+        function addAnswer(questionNumber) {
+            var answersContainer = document.getElementById("answersContainer" + questionNumber);
+            
+            var answerInput = document.createElement("input");
+            answerInput.type = "text";
+            answerInput.placeholder = "Введите вариант ответа";
+            
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            
+            var answerDiv = document.createElement("div");
+            answerDiv.appendChild(answerInput);
+            answerDiv.appendChild(checkbox);
+            
+            answersContainer.appendChild(answerDiv);
+        }
+        
+        function deleteQuestion(questionNumber) {
+            var questionDiv = document.getElementById("questionDiv" + questionNumber);
+            questionDiv.remove();
+        }
+        
+        function saveTest() {
+            var testName = document.getElementById("testName").value;
+            var questions = [];
+            
+            for (var i = 1; i <= questionCounter - 1; i++) {
+                var question = document.getElementById("question" + i).value;
+                var answersContainer = document.getElementById("answersContainer" + i);
+                var answers = [];
+                
+                for (var j = 0; j < answersContainer.children.length; j++) {
+                    var answerInput = answersContainer.children[j].querySelector("input");
+                    var checkbox = answersContainer.children[j].querySelector("input[type='checkbox']");
+                    
+                    var answer = {
+                        text: answerInput.value,
+                        isCorrect: checkbox.checked
+                    };
+                    
+                    answers.push(answer);
+                }
+                
+                var questionObj = {
+                    question: question,
+                    answers: answers
+                };
+                
+                questions.push(questionObj);
+            }
+            
+            var testObj = {
+                testName: testName,
+                questions: questions
+            };
+            
+            // Отправить данные на сервер или сохранить в БД
+            console.log(testObj);
+        }
+    </script>
+</body>
+</html>
